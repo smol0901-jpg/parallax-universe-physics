@@ -315,6 +315,7 @@ let starsCanvas, particlesCanvas, predCanvas;
 let predictor;
 let aiObserver;
 
+// ==================== INIT ====================
 function initStars() {
     starsCanvas = document.getElementById('starsCanvas');
     starsCtx = starsCanvas.getContext('2d');
@@ -368,6 +369,7 @@ function resizeCanvases() {
     initParticles();
 }
 
+// ==================== DRAW ====================
 function drawStars() {
     starsCtx.clearRect(0, 0, canvasWidth, canvasHeight);
     const time = simTime;
@@ -480,6 +482,7 @@ function updateHUD() {
     if (predictor) predictionData = predictor.predict(method);
 }
 
+// ==================== ANIMATION LOOP ====================
 function animate(currentTime) {
     const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
     lastTime = currentTime;
@@ -491,16 +494,30 @@ function animate(currentTime) {
         frameCount = 0;
         lastFpsUpdate = currentTime;
     }
+    
+    // Обновление физики
     particles.forEach(p => p.update(dt));
+    
+    // Отрисовка
     drawStars();
     drawParticles();
     drawPrediction();
     updateParallax();
     updateHUD();
+    
+    // Модули
+    if (window.particleVisualizer) window.particleVisualizer.update();
+    if (window.zoomNavigator) window.zoomNavigator.update();
+    if (window.planetSystem) window.planetSystem.update();
+    if (window.hypervisor) window.hypervisor.update();
+    if (window.supervisor) window.supervisor.update();
+    if (window.memoryManager) window.memoryManager.update();
     if (aiObserver) aiObserver.update();
+    
     requestAnimationFrame(animate);
 }
 
+// ==================== EVENTS ====================
 function setupEventListeners() {
     document.addEventListener('mousemove', (e) => { targetMouseX = e.clientX; targetMouseY = e.clientY; });
     window.addEventListener('scroll', () => { scrollY = window.scrollY; });
@@ -541,6 +558,7 @@ function setupEventListeners() {
         });
     });
 
+
     // Sliders
     const bindSlider = (id, path, prop, suffix = '', onChange = null) => {
         const el = document.getElementById(id);
@@ -572,6 +590,7 @@ function setupEventListeners() {
     bindSlider('animSmooth', 'global.animSmooth', 'smooth');
     bindSlider('aiFreq', 'ai.frequency', 'aiFreq', 's');
     bindSlider('aiDetail', 'ai.detail', 'aiDetail', '%');
+
 
     document.getElementById('aiEnabled')?.addEventListener('change', (e) => { 
         config.ai.enabled = e.target.checked; 
@@ -641,6 +660,7 @@ function showToast(message, type = 'info') {
     setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100px)'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
+// ==================== START ====================
 function init() {
     console.log('🚀 Запуск симуляции...');
     
@@ -653,8 +673,17 @@ function init() {
     initPrediction();
     setupEventListeners();
     
+    // ИИ
     aiObserver = new AIObserver();
     aiObserver.init();
+    
+    // Модули
+    if (window.particleVisualizer) window.particleVisualizer.init();
+    if (window.zoomNavigator) window.zoomNavigator.init();
+    if (window.planetSystem) window.planetSystem.init();
+    if (window.hypervisor) window.hypervisor.init();
+    if (window.supervisor) window.supervisor.init();
+    if (window.memoryManager) window.memoryManager.init();
     
     console.log('✅ Частиц:', particles.length);
     console.log('✅ Звёзд:', stars.length);
