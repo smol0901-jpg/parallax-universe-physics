@@ -3,8 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌌 Universe Physics Simulator | ИИ Наблюдатель</title>
+    <title>🌌 Universe Physics Simulator | Симулятор Вселенной</title>
     <link rel="stylesheet" href="style.css">
+    <script src="visualization.js" defer></script>
+    <script src="zoom.js" defer></script>
+    <script src="planets.js" defer></script>
+    <script src="hypervisor.js" defer></script>
+    <script src="supervisor.js" defer></script>
+    <script src="math.js" defer></script>
+    <script src="memory.js" defer></script>
 </head>
 <body>
 
@@ -52,7 +59,7 @@
     <div class="layer layer-5"></div>
 </div>
 
-<div class="mouse-hint">🖱️ Двигайте мышь для параллакса</div>
+<div class="mouse-hint">🖱️ Двигайте мышь для параллакса | Колесо: зум | Shift+drag: панорамирование | H/A/C: скрыть элементы</div>
 
 <div class="bottom-controls">
     <button class="bottom-btn" id="settingsBtn" title="Настройки">⚙️</button>
@@ -62,7 +69,10 @@
     <button class="bottom-btn" id="evoBtn" title="Эволюция">🧬</button>
     <button class="bottom-btn" id="resetBtn" title="Сброс">🔄</button>
     <button class="bottom-btn" id="fullscreenBtn" title="Полный экран">⛶</button>
+    <button class="bottom-btn" id="zoomInBtn" title="Приблизить">🔍+</button>
+    <button class="bottom-btn" id="zoomOutBtn" title="Отдалить">🔍-</button>
 </div>
+
 
 <div class="control-panel" id="controlPanel">
     <div class="panel-header">
