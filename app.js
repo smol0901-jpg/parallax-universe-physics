@@ -1,8 +1,295 @@
 /**
- * Main Application
- * Точка входа и основной цикл
+ * Universe Physics Simulator - Complete
+ * Все модули в одном файле
  */
 
+// ==================== VECTOR2 ====================
+class Vector2 {
+    constructor(x = 0, y = 0) {
+        this.x = x;
+        this.y = y;
+    }
+    add(v) { return new Vector2(this.x + v.x, this.y + v.y); }
+    sub(v) { return new Vector2(this.x - v.x, this.y - v.y); }
+    mult(s) { return new Vector2(this.x * s, this.y * s); }
+    div(s) { return new Vector2(this.x / s, this.y / s); }
+    mag() { return Math.sqrt(this.x * this.x + this.y * this.y); }
+    magSq() { return this.x * this.x + this.y * this.y; }
+    normalize() {
+        const m = this.mag();
+        return m > 0 ? this.div(m) : new Vector2();
+    }
+    limit(max) {
+        if (this.magSq() > max * max) {
+            return this.normalize().mult(max);
+        }
+        return this;
+    }
+    dist(v) { return this.sub(v).mag(); }
+    clone() { return new Vector2(this.x, this.y); }
+    static random() {
+        const angle = Math.random() * Math.PI * 2;
+        return new Vector2(Math.cos(angle), Math.sin(angle));
+    }
+}
+
+// ==================== PARTICLE ====================
+class Particle {
+    constructor(x, y) {
+        this.pos = new Vector2(x || Math.random() * canvasWidth, y || Math.random() * canvasHeight);
+        this.vel = new Vector2((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2);
+        this.acc = new Vector2();
+        this.mass = Math.random() * 2 + 0.5;
+        this.charge = Math.random() > 0.5 ? 1 : -1;
+        this.radius = 2 + this.mass;
+        this.life = 1;
+        this.decay = 0.0005 + Math.random() * 0.001;
+    }
+    
+    applyForce(force) {
+        this.acc = this.acc.add(force.div(this.mass));
+    }
+    
+    attractTo(target, strength = 1) {
+        const force = target.sub(this.pos);
+        let d = force.mag();
+        d = Math.max(Math.min(d, 500), 5);
+        const G = config.physics.gravity * strength;
+        const magnitude = (G * this.mass) / (d * d);
+        return force.normalize().mult(magnitude);
+    }
+    
+    applyLorentz() {
+        if (config.physics.magneticField <= 0) return new Vector2();
+        const v = this.vel;
+        const B = config.physics.magneticField;
+        const perp = new Vector2(-v.y, v.x);
+        return perp.mult(this.charge * B * 0.1);
+    }
+    
+    applyBrownian() {
+        const temp = config.physics.temperature / 273;
+        return new Vector2(
+            (Math.random() - 0.5) * temp,
+            (Math.random() - 0.5) * temp
+        ).mult(0.5);
+    }
+    
+    applyDrag() {
+        const drag = this.vel.clone();
+        drag.mult(-1);
+        drag.normalize();
+        drag.mult(config.physics.viscosity * this.vel.magSq() * 0.01);
+        return drag;
+    }
+    
+    update(dt) {
+        const cx = canvasWidth / 2;
+        const cy = canvasHeight / 2;
+        
+        const centerForce = this.attractTo(new Vector2(cx, cy), 0.5);
+        this.applyForce(centerForce);
+        this.applyForce(this.applyLorentz());
+        this.applyForce(this.applyBrownian());
+        this.applyForce(this.applyDrag());
+        
+        this.vel = this.vel.add(this.acc);
+        this.vel = this.vel.limit(15);
+        this.pos = this.pos.add(this.vel.mult(dt * 60));
+        this.acc = new Vector2();
+        
+        this.wrap();
+        this.life -= this.decay * dt * 60;
+        if (this.life <= 0) this.reset();
+    }
+    
+    wrap() {
+        if (this.pos.x < 0) this.pos.x = canvasWidth;
+        if (this.pos.x > canvasWidth) this.pos.x = 0;
+        if (this.pos.y < 0) this.pos.y = canvasHeight;
+        if (this.pos.y > canvasHeight) this.pos.y = 0;
+    }
+    
+    reset() {
+        this.pos = new Vector2(Math.random() * canvasWidth, Math.random() * canvasHeight);
+        this.vel = new Vector2((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2);
+        this.life = 1;
+    }
+    
+    getEnergy() {
+        return 0.5 * this.mass * this.vel.magSq();
+    }
+}
+
+// ==================== PREDICTOR ====================
+class Predictor {
+    constructor() {
+        this.history = [];
+        this.maxHistory = 200;
+    }
+    
+    add(value) {
+        this.history.push(value);
+        if (this.history.length > this.maxHistory) this.history.shift();
+    }
+    
+    linearRegression() {
+        if (this.history.length < 2) return [];
+        const n = this.history.length;
+        let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+        for (let i = 0; i < n; i++) {
+            sumX += i;
+            sumY += this.history[i];
+            sumXY += i * this.history[i];
+            sumX2 += i * i;
+        }
+        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        const intercept = (sumY - slope * sumX) / n;
+        const predictions = [];
+        for (let i = 0; i < config.ai.detail; i++) {
+            predictions.push(slope * (n + i) + intercept);
+        }
+        return predictions;
+    }
+    
+    exponentialSmoothing(alpha = 0.3) {
+        if (this.history.length < 2) return [];
+        let smoothed = this.history[0];
+        for (let i = 1; i < this.history.length; i++) {
+            smoothed = alpha * this.history[i] + (1 - alpha) * smoothed;
+        }
+        const predictions = [];
+        for (let i = 0; i < config.ai.detail; i++) {
+            predictions.push(smoothed + Math.sin(i * 0.1) * Math.abs(smoothed * 0.1));
+        }
+        return predictions;
+    }
+    
+    polynomialRegression() {
+        if (this.history.length < 3) return [];
+        let mean = this.history.reduce((a, b) => a + b, 0) / this.history.length;
+        let variance = this.history.reduce((a, b) => a + (b - mean) ** 2, 0) / this.history.length;
+        const predictions = [];
+        for (let i = 0; i < config.ai.detail; i++) {
+            const trend = (this.history.length + i - this.history.length / 2) / this.history.length;
+            predictions.push(mean + trend * variance * 0.1 * Math.sin(i * 0.2));
+        }
+        return predictions;
+    }
+    
+    fourierPredict() {
+        if (this.history.length < 10) return [];
+        const predictions = [];
+        for (let i = 0; i < config.ai.detail; i++) {
+            let value = 0;
+            for (let k = 1; k <= 3; k++) {
+                value += Math.sin((2 * Math.PI * k * (this.history.length + i)) / 20 + k) * (1 / k);
+            }
+            predictions.push(this.history[this.history.length - 1] + value * 10);
+        }
+        return predictions;
+    }
+    
+    predict(method = 'linear') {
+        switch (method) {
+            case 'linear': return this.linearRegression();
+            case 'exponential': return this.exponentialSmoothing();
+            case 'polynomial': return this.polynomialRegression();
+            case 'fourier': return this.fourierPredict();
+            default: return this.linearRegression();
+        }
+    }
+}
+
+// ==================== AI OBSERVER ====================
+class AIObserver {
+    constructor() {
+        this.enabled = true;
+        this.voice = 'neutral';
+        this.frequency = 5;
+        this.detail = 50;
+        this.lastMessageTime = 0;
+    }
+    
+    init() {}
+    
+    analyze() {
+        const totalEnergy = particles.reduce((sum, p) => sum + p.getEnergy(), 0);
+        const avgVelocity = particles.reduce((sum, p) => sum + p.vel.mag(), 0) / (particles.length || 1);
+        const entropy = -Math.log(totalEnergy + 0.001) * 100;
+        return {
+            totalEnergy,
+            avgVelocity,
+            entropy,
+            temperature: config.physics.temperature,
+            gravity: config.physics.gravity,
+            magneticField: config.physics.magneticField,
+            particleCount: particles.length
+        };
+    }
+    
+    generateMessage(type = 'normal') {
+        const a = this.analyze();
+        const templates = {
+            neutral: [
+                `Энергия системы: ${a.totalEnergy.toFixed(1)} Дж. Температура: ${a.temperature}K.`,
+                `Наблюдаю ${a.particleCount} частиц. Средняя скорость: ${a.avgVelocity.toFixed(2)} м/с.`,
+                `Энтропия: ${a.entropy.toFixed(2)}. Система ${a.entropy < 50 ? 'стабильна' : 'хаотична'}.`,
+                `Гравитация ${a.gravity > 1 ? 'повышена' : 'в норме'}. Магнитное поле: ${a.magneticField.toFixed(2)}.`
+            ],
+            scientific: [
+                `Термодинамика: T=${a.temperature}K, E=${a.totalEnergy.toFixed(2)}J, S=${a.entropy.toFixed(4)}`,
+                `Вектор скорости: v̅=${a.avgVelocity.toFixed(3)} м/с. N=${a.particleCount} частиц.`,
+                `Энтропия S = -k·ln(W) = ${a.entropy.toFixed(4)}. Равновесие ${a.entropy < 50 ? 'близко' : 'далеко'}.`
+            ],
+            poetic: [
+                `В глубинах космоса танцуют частицы... Энергия ${a.totalEnergy.toFixed(0)} единиц.`,
+                `Каждая частица — звезда в миниатюре. ${a.particleCount} звёзд рождаются и угасают.`,
+                `Гравитация — невидимая рука, связывающая всё сущее.`
+            ],
+            status: [
+                `📊 Статус: ${a.particleCount} частиц, T=${a.temperature}K, E=${a.totalEnergy.toFixed(1)}J.`
+            ],
+            predict: [
+                `🔮 Прогноз: ожидаю ${(a.totalEnergy * 1.1).toFixed(1)}J через 10 единиц времени.`
+            ],
+            physics: [
+                `⚛️ Гравитация: G=${a.gravity}, Магнитное поле: B=${a.magneticField.toFixed(2)}.`
+            ],
+            entropy: [
+                `📉 Энтропия S=${a.entropy.toFixed(2)}. Система ${a.entropy < 50 ? 'близка к равновесию' : 'в нестабильном состоянии'}.`
+            ]
+        };
+        
+        let msgs = templates[this.voice] || templates.neutral;
+        if (type !== 'normal') msgs = templates[type] || templates.neutral;
+        return msgs[Math.floor(Math.random() * msgs.length)];
+    }
+    
+    ask(question) {
+        let type = 'normal';
+        if (question.includes('статус') || question.includes('status')) type = 'status';
+        else if (question.includes('прогноз') || question.includes('predict')) type = 'predict';
+        else if (question.includes('физика') || question.includes('physics')) type = 'physics';
+        else if (question.includes('энтропия') || question.includes('entropy')) type = 'entropy';
+        
+        const msg = this.generateMessage(type);
+        document.getElementById('aiMessage').textContent = msg;
+        return msg;
+    }
+    
+    update() {
+        if (!this.enabled) return;
+        const now = Date.now();
+        if (now - this.lastMessageTime > this.frequency * 1000) {
+            const msg = this.generateMessage('normal');
+            document.getElementById('aiMessage').textContent = msg;
+            this.lastMessageTime = now;
+        }
+    }
+}
+
+// ==================== MAIN APP ====================
 const config = {
     global: { animSmooth: 0.08, mouseSensitivity: 1.0 },
     layers: {
@@ -23,10 +310,10 @@ let scrollY = 0, simTime = 0, lastTime = performance.now();
 let fps = 60, frameCount = 0, lastFpsUpdate = 0;
 const layers = {};
 let stars = [], particles = [], predictionData = [], energyHistory = [];
-
 let starsCtx, particlesCtx, predCtx;
 let starsCanvas, particlesCanvas, predCanvas;
 let predictor;
+let aiObserver;
 
 function initStars() {
     starsCanvas = document.getElementById('starsCanvas');
@@ -56,6 +343,7 @@ function initParticles() {
             Math.random() * canvasHeight
         ));
     }
+    console.log('✅ Создано частиц:', particles.length);
 }
 
 function initPrediction() {
@@ -90,13 +378,6 @@ function drawStars() {
         starsCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         starsCtx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         starsCtx.fill();
-        if (star.size > 1.5) {
-            const gradient = starsCtx.createRadialGradient(star.x, star.y, 0, star.x, star.y, star.size * 3);
-            gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.3})`);
-            gradient.addColorStop(1, 'transparent');
-            starsCtx.fillStyle = gradient;
-            starsCtx.fillRect(star.x - star.size * 3, star.y - star.size * 3, star.size * 6, star.size * 6);
-        }
     });
 }
 
@@ -136,6 +417,7 @@ function drawPrediction() {
     const min = Math.min(...allValues);
     const max = Math.max(...allValues);
     const range = max - min || 1;
+    
     predCtx.beginPath();
     predCtx.strokeStyle = 'rgba(102, 126, 234, 0.8)';
     predCtx.lineWidth = 2;
@@ -145,6 +427,7 @@ function drawPrediction() {
         if (i === 0) predCtx.moveTo(x, y); else predCtx.lineTo(x, y);
     });
     predCtx.stroke();
+    
     predCtx.beginPath();
     predCtx.strokeStyle = 'rgba(236, 72, 153, 0.8)';
     predCtx.lineWidth = 2;
@@ -214,8 +497,7 @@ function animate(currentTime) {
     drawPrediction();
     updateParallax();
     updateHUD();
-    if (window.aiObserver) window.aiObserver.update();
-    if (window.evolution) window.evolution.evolve();
+    if (aiObserver) aiObserver.update();
     requestAnimationFrame(animate);
 }
 
@@ -235,21 +517,8 @@ function setupEventListeners() {
     });
     document.getElementById('aiToggleBtn').addEventListener('click', () => {
         config.ai.enabled = !config.ai.enabled;
-        if (window.aiObserver) window.aiObserver.enabled = config.ai.enabled;
+        if (aiObserver) aiObserver.enabled = config.ai.enabled;
         showToast(config.ai.enabled ? '🤖 ИИ включён' : '🤖 ИИ выключен', 'info');
-    });
-    document.getElementById('sandboxBtn').addEventListener('click', () => {
-        if (window.sandbox) {
-            window.sandbox.enabled = !window.sandbox.enabled;
-            document.querySelector('.sandbox-panel')?.classList.toggle('open', window.sandbox.enabled);
-            showToast(window.sandbox.enabled ? '🔬 Песочница открыта' : '🔬 Песочница закрыта', 'info');
-        }
-    });
-    document.getElementById('evoBtn').addEventListener('click', () => {
-        if (window.evolution) {
-            window.evolution.enabled = !window.evolution.enabled;
-            showToast(window.evolution.enabled ? '🧬 Эволюция включена' : '🧬 Эволюция выключена', 'info');
-        }
     });
     document.getElementById('resetBtn').addEventListener('click', () => {
         initStars();
@@ -272,46 +541,45 @@ function setupEventListeners() {
         });
     });
 
-    const sliders = [
-        { id: 'gravConst', path: 'physics.gravity', prop: 'gravConst' },
-        { id: 'magField', path: 'physics.magneticField', prop: 'magField' },
-        { id: 'viscosity', path: 'physics.viscosity', prop: 'viscosity' },
-        { id: 'systemTemp', path: 'physics.temperature', prop: 'systemTemp', suffix: 'K' },
-        { id: 'numParticles', path: 'particles.count', prop: 'numParticles', onChange: initParticles },
-        { id: 'particleSpeed', path: 'particles.speed', prop: 'particleSpeed' },
-        { id: 'starCount', path: 'stars.count', prop: 'starCount', onChange: initStars },
-        { id: 'twinkle', path: 'stars.twinkleAmount', prop: 'twinkle', scale: 0.01, suffix: '%' },
-        { id: 'starSize', path: 'stars.size', prop: 'starSize', onChange: initStars },
-        { id: 'particleSize', path: 'particles.size', prop: 'particleSize' },
-        { id: 'mouseSens', path: 'global.mouseSensitivity', prop: 'mouseSens' },
-        { id: 'animSmooth', path: 'global.animSmooth', prop: 'smooth' },
-        { id: 'aiFreq', path: 'ai.frequency', prop: 'aiFreq', suffix: 's' },
-        { id: 'aiDetail', path: 'ai.detail', prop: 'aiDetail', suffix: '%' },
-        { id: 'predHorizon', path: 'ai.detail', prop: 'predHorizon' }
-    ];
-    sliders.forEach(s => {
-        const el = document.getElementById(s.id);
+    // Sliders
+    const bindSlider = (id, path, prop, suffix = '', onChange = null) => {
+        const el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', () => {
                 const val = parseFloat(el.value);
-                const path = s.path.split('.');
+                const parts = path.split('.');
                 let obj = config;
-                path.forEach(p => obj = obj[p]);
+                for (let p of parts) obj = obj[p];
                 obj = val;
-                const valEl = document.getElementById(s.prop + 'Val');
-                if (valEl) valEl.textContent = val + (s.suffix || '');
-                if (s.onChange) s.onChange();
+                const valEl = document.getElementById(prop + 'Val');
+                if (valEl) valEl.textContent = val + suffix;
+                if (onChange) onChange();
             });
         }
-    });
+    };
+    
+    bindSlider('gravConst', 'physics.gravity', 'gravConst');
+    bindSlider('magField', 'physics.magneticField', 'magField');
+    bindSlider('viscosity', 'physics.viscosity', 'viscosity');
+    bindSlider('systemTemp', 'physics.temperature', 'systemTemp', 'K');
+    bindSlider('numParticles', 'particles.count', 'numParticles', '', initParticles);
+    bindSlider('particleSpeed', 'particles.speed', 'particleSpeed');
+    bindSlider('starCount', 'stars.count', 'starCount', '', initStars);
+    bindSlider('twinkle', 'stars.twinkleAmount', 'twinkle', '%');
+    bindSlider('starSize', 'stars.size', 'starSize', '', initStars);
+    bindSlider('particleSize', 'particles.size', 'particleSize');
+    bindSlider('mouseSens', 'global.mouseSensitivity', 'mouseSens');
+    bindSlider('animSmooth', 'global.animSmooth', 'smooth');
+    bindSlider('aiFreq', 'ai.frequency', 'aiFreq', 's');
+    bindSlider('aiDetail', 'ai.detail', 'aiDetail', '%');
 
     document.getElementById('aiEnabled')?.addEventListener('change', (e) => { 
         config.ai.enabled = e.target.checked; 
-        if (window.aiObserver) window.aiObserver.enabled = e.target.checked;
+        if (aiObserver) aiObserver.enabled = e.target.checked;
     });
     document.getElementById('aiVoice')?.addEventListener('change', (e) => { 
         config.ai.voice = e.target.value; 
-        if (window.aiObserver) window.aiObserver.voice = e.target.value;
+        if (aiObserver) aiObserver.voice = e.target.value;
     });
     document.getElementById('trailToggle')?.addEventListener('change', (e) => { config.particles.showTrail = e.target.checked; });
     document.getElementById('predAlgorithm')?.addEventListener('change', () => { refreshPrediction(); });
@@ -353,9 +621,7 @@ function applyPreset(name) {
 }
 
 function askAI(type) {
-    if (window.aiObserver) {
-        window.aiObserver.ask(type);
-    }
+    if (aiObserver) aiObserver.ask(type);
 }
 
 function refreshPrediction() {
@@ -376,7 +642,7 @@ function showToast(message, type = 'info') {
 }
 
 function init() {
-    console.log('🚀 Инициализация...');
+    console.log('🚀 Запуск симуляции...');
     
     for (let i = 1; i <= 5; i++) {
         layers[i] = document.querySelector('.layer-' + i);
@@ -387,22 +653,19 @@ function init() {
     initPrediction();
     setupEventListeners();
     
-    // Инициализация модулей
-    if (window.evolution) window.evolution.init();
-    if (window.sandbox) window.sandbox.init();
-    if (window.aiObserver) window.aiObserver.init();
+    aiObserver = new AIObserver();
+    aiObserver.init();
     
-    console.log('✅ Частиц создано:', particles.length);
-    console.log('✅ Звёзд создано:', stars.length);
+    console.log('✅ Частиц:', particles.length);
+    console.log('✅ Звёзд:', stars.length);
     
     setTimeout(() => {
         const loading = document.getElementById('loadingScreen');
         if (loading) loading.classList.add('hidden');
-    }, 1500);
+    }, 1000);
     
     requestAnimationFrame(animate);
-    
-    setTimeout(() => showToast('🧠 ИИ Наблюдатель активирован', 'success'), 2000);
+    setTimeout(() => showToast('🧠 ИИ Наблюдатель активирован', 'success'), 1500);
 }
 
 window.addEventListener('DOMContentLoaded', init);
