@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌌 Universe Physics Simulator | Наблюдатель ИИ</title>
+    <title>🌌 Universe Physics Simulator | ИИ Наблюдатель</title>
     <style>
         :root {
             --primary: #667eea;
@@ -20,6 +20,43 @@
             --info: #3b82f6;
         }
 
+        /* THEMES */
+        [data-theme="cyberpunk"] {
+            --primary: #ff00ff;
+            --secondary: #00ffff;
+            --accent: #ffff00;
+            --bg-dark: #0a001a;
+            --border: rgba(255, 0, 255, 0.4);
+        }
+        [data-theme="sunset"] {
+            --primary: #ff6b35;
+            --secondary: #f7c59f;
+            --accent: #ffba08;
+            --bg-dark: #1a0a0a;
+            --border: rgba(255, 107, 53, 0.4);
+        }
+        [data-theme="ocean"] {
+            --primary: #0077b6;
+            --secondary: #00b4d8;
+            --accent: #90e0ef;
+            --bg-dark: #000a1a;
+            --border: rgba(0, 119, 182, 0.4);
+        }
+        [data-theme="minimal"] {
+            --primary: #333;
+            --secondary: #666;
+            --accent: #999;
+            --bg-dark: #111;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        [data-theme="nature"] {
+            --primary: #2d6a4f;
+            --secondary: #40916c;
+            --accent: #95d5b2;
+            --bg-dark: #0a1a0f;
+            --border: rgba(45, 106, 79, 0.4);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -30,7 +67,7 @@
             min-height: 100vh;
         }
 
-        /* ========== LOADING SCREEN ========== */
+        /* LOADING SCREEN */
         #loadingScreen {
             position: fixed;
             inset: 0;
@@ -59,7 +96,7 @@
             letter-spacing: 2px;
         }
 
-        /* ========== PARALLAX CONTAINER ========== */
+        /* PARALLAX CONTAINER */
         .parallax-container {
             position: relative;
             width: 100vw;
@@ -77,7 +114,6 @@
             transition: opacity 0.5s ease;
         }
 
-        /* LAYER 1: Deep Space Background */
         .layer-1 {
             z-index: 1;
             background: radial-gradient(ellipse at 20% 50%, #0f0f3a 0%, transparent 50%),
@@ -90,7 +126,6 @@
             100% { filter: brightness(1.1) saturate(1.2); }
         }
 
-        /* LAYER 2: Stars Canvas */
         .layer-2 { z-index: 2; }
         canvas.stars-canvas {
             position: absolute;
@@ -99,120 +134,8 @@
             height: 100%;
         }
 
-        /* LAYER 3: Main Content */
-        .layer-3 {
-            z-index: 3;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: auto;
-        }
+        .layer-3 { z-index: 3; }
 
-        .hero-card {
-            position: relative;
-            text-align: center;
-            padding: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem);
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            max-width: 700px;
-        }
-        .hero-card::before {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            border-radius: 24px;
-            padding: 1px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.5), transparent, rgba(236, 72, 153, 0.5));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            background: rgba(102, 126, 234, 0.15);
-            border-radius: 20px;
-            font-size: 12px;
-            color: var(--accent);
-            margin-bottom: 1rem;
-        }
-        .hero-badge .dot {
-            width: 6px;
-            height: 6px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-
-        .hero-title {
-            font-size: clamp(1.8rem, 5vw, 3.5rem);
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff 0%, #a0f0ff 30%, #c084fc 60%, #ff6b9d 100%);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: gradientShift 4s ease-in-out infinite;
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .hero-subtitle {
-            font-size: clamp(0.85rem, 2vw, 1rem);
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-
-        .hero-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-        .btn-ghost {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-        .btn-ghost:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        /* LAYER 4: Particles Canvas */
         .layer-4 { z-index: 4; }
         canvas.particles-canvas {
             position: absolute;
@@ -221,13 +144,9 @@
             height: 100%;
         }
 
-        /* LAYER 5: Top Layer */
-        .layer-5 {
-            z-index: 5;
-            pointer-events: none;
-        }
+        .layer-5 { z-index: 5; pointer-events: none; }
 
-        /* ========== PHYSICS HUD ========== */
+        /* PHYSICS HUD */
         .physics-hud {
             position: fixed;
             top: 20px;
@@ -260,17 +179,16 @@
         .hud-value.warning { color: var(--warning); }
         .hud-value.danger { color: var(--danger); }
 
-        /* ========== AI OBSERVER PANEL ========== */
+        /* AI OBSERVER PANEL */
         .ai-panel {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
+            top: 20px;
             right: 20px;
-            max-width: 600px;
+            max-width: 320px;
             background: var(--panel-bg);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 20px;
+            padding: 16px;
             z-index: 100;
             backdrop-filter: blur(10px);
         }
@@ -278,30 +196,31 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .ai-avatar {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
         }
         .ai-name {
             font-weight: 700;
+            font-size: 14px;
             color: var(--text);
         }
         .ai-status {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--success);
         }
         .ai-message {
             color: var(--text-secondary);
-            line-height: 1.6;
-            font-size: 13px;
+            line-height: 1.5;
+            font-size: 12px;
         }
         .ai-thinking {
             display: flex;
@@ -322,12 +241,50 @@
             40% { transform: scale(1); opacity: 1; }
         }
 
-        /* ========== CONTROL PANEL ========== */
+        /* BOTTOM CONTROLS */
+        .bottom-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+            padding: 12px 20px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .bottom-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bottom-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .bottom-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* CONTROL PANEL */
         .control-panel {
             position: fixed;
             top: 0;
-            right: -420px;
-            width: 400px;
+            right: -450px;
+            width: 430px;
             height: 100vh;
             background: var(--panel-bg);
             border-left: 1px solid var(--border);
@@ -362,18 +319,18 @@
 
         .tab-nav {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 20px;
         }
         .tab-btn {
             flex: 1;
-            padding: 10px;
+            padding: 10px 8px;
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text-secondary);
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             transition: all 0.3s;
         }
         .tab-btn.active {
@@ -385,8 +342,9 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
+
         .ctrl-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         .ctrl-label {
             display: flex;
@@ -452,7 +410,64 @@
             transform: translateX(20px);
         }
 
-        /* ========== PREDICTION GRAPH ========== */
+        .section-header {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 20px 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .theme-item {
+            padding: 12px 8px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 11px;
+        }
+        .theme-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .theme-item.active {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.2);
+        }
+        .theme-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .preset-btn {
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        .preset-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+        }
+
         .prediction-graph {
             background: rgba(0,0,0,0.3);
             border-radius: 12px;
@@ -466,39 +481,10 @@
         }
         canvas#predictionCanvas {
             width: 100%;
-            height: 120px;
+            height: 100px;
             border-radius: 8px;
         }
 
-        /* ========== MOUSE INDICATOR ========== */
-        .mouse-indicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            font-size: 12px;
-            z-index: 50;
-            backdrop-filter: blur(10px);
-        }
-        .kbd {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2px 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            font-size: 10px;
-            font-family: monospace;
-        }
-
-        /* ========== FPS COUNTER ========== */
         .fps-counter {
             position: fixed;
             top: 20px;
@@ -520,33 +506,16 @@
             border-radius: 50%;
         }
 
-        /* ========== SCROLL CONTENT ========== */
-        .scroll-content {
-            position: relative;
-            z-index: 10;
-            background: var(--bg-dark);
-            padding: 100px 20px;
-        }
-        .content-section {
-            max-width: 800px;
-            margin: 0 auto 80px;
-        }
-        .section-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .section-text {
+        .mouse-hint {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
             color: var(--text-secondary);
-            line-height: 1.8;
-            font-size: 1.1rem;
+            opacity: 0.6;
         }
 
-        /* ========== TOAST ========== */
         #toastContainer {
             position: fixed;
             top: 80px;
@@ -572,194 +541,242 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* ========== THEME SELECTOR ========== */
-        .theme-selector {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
-        .theme-btn {
-            width: 32px;
-            height: 32px;
+        select {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border);
             border-radius: 8px;
-            border: 2px solid transparent;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
             cursor: pointer;
+            font-size: 12px;
             transition: all 0.2s;
         }
-        .theme-btn:hover, .theme-btn.active {
-            border-color: white;
-            transform: scale(1.1);
+        .action-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
         }
     </style>
 </head>
 <body>
 
-<!-- LOADING SCREEN -->
 <div id="loadingScreen">
     <div class="loader-ring"></div>
     <div class="loader-text">Инициализация симуляции вселенной...</div>
 </div>
 
-<!-- FPS COUNTER -->
 <div class="fps-counter">
     <span class="fps-dot"></span>
     <span id="fpsValue">60</span> FPS
 </div>
 
-<!-- PHYSICS HUD -->
+
 <div class="physics-hud">
-    <div class="hud-title">⚛️ Физика Вселенной</div>
-    <div class="hud-row">
-        <span class="hud-label">Время симуляции</span>
-        <span class="hud-value" id="simTime">0.00s</span>
-    </div>
-    <div class="hud-row">
-        <span class="hud-label">Частиц</span>
-        <span class="hud-value" id="particleCount">0</span>
-    </div>
-    <div class="hud-row">
-        <span class="hud-label">Температура</span>
-        <span class="hud-value" id="temperature">0K</span>
-    </div>
-    <div class="hud-row">
-        <span class="hud-label">Энергия системы</span>
-        <span class="hud-value" id="systemEnergy">0 J</span>
-    </div>
-    <div class="hud-row">
-        <span class="hud-label">Энтропия</span>
-        <span class="hud-value" id="entropy">0</span>
-    </div>
-    <div class="hud-row">
-        <span class="hud-label">Давление</span>
-        <span class="hud-value" id="pressure">0 Pa</span>
-    </div>
-    <div class="hud-row">
-        <span class="hud-label">Плотность</span>
-        <span class="hud-value" id="density">0</span>
-    </div>
+    <div class="hud-title">⚛️ Физика</div>
+    <div class="hud-row"><span class="hud-label">Время</span><span class="hud-value" id="simTime">0.00s</span></div>
+    <div class="hud-row"><span class="hud-label">Частиц</span><span class="hud-value" id="particleCount">0</span></div>
+    <div class="hud-row"><span class="hud-label">Температура</span><span class="hud-value" id="temperature">0K</span></div>
+    <div class="hud-row"><span class="hud-label">Энергия</span><span class="hud-value" id="systemEnergy">0 J</span></div>
+    <div class="hud-row"><span class="hud-label">Энтропия</span><span class="hud-value" id="entropy">0</span></div>
+    <div class="hud-row"><span class="hud-label">Давление</span><span class="hud-value" id="pressure">0 Pa</span></div>
 </div>
 
-<!-- PARALLAX CONTAINER -->
-<div class="parallax-container">
-    <div class="layer layer-1"></div>
-    <div class="layer layer-2">
-        <canvas id="starsCanvas" class="stars-canvas"></canvas>
-    </div>
-    <div class="layer layer-3">
-        <div class="hero-card">
-            <div class="hero-badge">
-                <span class="dot"></span>
-                <span>ИИ Наблюдатель v1.0 Active</span>
-            </div>
-            <h1 class="hero-title">🌌 СИМУЛЯТОР ФИЗИКИ ВСЕЛЕННОЙ</h1>
-            <p class="hero-subtitle">Вы — наблюдатель. ИИ анализирует физические процессы, строит прогнозы и комментирует события в реальном времени.</p>
-            <div class="hero-actions">
-                <button class="btn btn-primary" id="openPanelBtn">⚙️ Панель управления</button>
-                <button class="btn btn-ghost" id="themeBtn">🎨 Темы</button>
-            </div>
-        </div>
-    </div>
-    <div class="layer layer-4">
-        <canvas id="particlesCanvas" class="particles-canvas"></canvas>
-    </div>
-    <div class="layer layer-5"></div>
-</div>
-
-<!-- AI OBSERVER PANEL -->
 <div class="ai-panel">
     <div class="ai-header">
         <div class="ai-avatar">🧠</div>
         <div>
             <div class="ai-name">ИИ Наблюдатель</div>
-            <div class="ai-status">● Анализирую данные</div>
+            <div class="ai-status">● Анализирую</div>
         </div>
     </div>
-    <div class="ai-message" id="aiMessage">
-        Инициализация симуляции... Добро пожаловать, Наблюдатель. Я отслеживаю все физические процессы в этой вселенной и готов предоставить анализ в реальном времени.
-    </div>
+    <div class="ai-message" id="aiMessage">Инициализация симуляции...</div>
     <div class="ai-thinking" id="aiThinking" style="display: none;">
         <span></span><span></span><span></span>
     </div>
 </div>
 
-<!-- MOUSE INDICATOR -->
-<div class="mouse-indicator">
-    <span>🖱️</span>
-    <span>Двигайте мышь для параллакса</span>
-    <span class="kbd">ESC</span>
-    <span>панель</span>
+<div class="parallax-container">
+    <div class="layer layer-1"></div>
+    <div class="layer layer-2"><canvas id="starsCanvas" class="stars-canvas"></canvas></div>
+    <div class="layer layer-3"></div>
+    <div class="layer layer-4"><canvas id="particlesCanvas" class="particles-canvas"></canvas></div>
+    <div class="layer layer-5"></div>
 </div>
 
-<!-- CONTROL PANEL -->
+<div class="mouse-hint">🖱️ Двигайте мышь для параллакса</div>
+
+<div class="bottom-controls">
+    <button class="bottom-btn" id="settingsBtn" title="Настройки">⚙️</button>
+    <button class="bottom-btn" id="themeBtn" title="Темы">🎨</button>
+    <button class="bottom-btn" id="aiToggleBtn" title="ИИ Вкл/Выкл">🤖</button>
+    <button class="bottom-btn" id="resetBtn" title="Сброс">🔄</button>
+    <button class="bottom-btn" id="fullscreenBtn" title="Полный экран">⛶</button>
+</div>
+
 <div class="control-panel" id="controlPanel">
     <div class="panel-header">
-        <span class="panel-title">⚙️ Управление симуляцией</span>
+        <span class="panel-title">⚙️ Настройки</span>
         <button class="close-btn" id="closePanelBtn">×</button>
     </div>
 
     <div class="tab-nav">
         <button class="tab-btn active" data-tab="physics">Физика</button>
+        <button class="tab-btn" data-tab="visual">Визуал</button>
         <button class="tab-btn" data-tab="ai">ИИ</button>
-        <button class="tab-btn" data-tab="predictions">Прогнозы</button>
+        <button class="tab-btn" data-tab="pred">Прогноз</button>
     </div>
 
     <!-- PHYSICS TAB -->
     <div class="tab-content active" id="tab-physics">
+        <div class="section-header">Гравитация и силы</div>
         <div class="ctrl-group">
-            <div class="ctrl-label"><span>Гравитационная постоянная</span><span class="ctrl-value" id="gravConstVal">1.00</span></div>
-            <input type="range" id="gravConst" min="0.1" max="5" step="0.1" value="1">
-        </div>
-        <div class="ctrl-group">
-            <div class="ctrl-label"><span>Скорость частиц</span><span class="ctrl-value" id="particleSpeedVal">1.00</span></div>
-            <input type="range" id="particleSpeed" min="0.1" max="3" step="0.1" value="1">
-        </div>
-        <div class="ctrl-group">
-            <div class="ctrl-label"><span>Температура системы</span><span class="ctrl-value" id="systemTempVal">273</span></div>
-            <input type="range" id="systemTemp" min="0" max="1000" step="10" value="273">
-        </div>
-        <div class="ctrl-group">
-            <div class="ctrl-label"><span>Вязкость среды</span><span class="ctrl-value" id="viscosityVal">0.00</span></div>
-            <input type="range" id="viscosity" min="0" max="0.5" step="0.01" value="0">
+            <div class="ctrl-label"><span>Гравитация</span><span class="ctrl-value" id="gravConstVal">1.00</span></div>
+            <input type="range" id="gravConst" min="0" max="5" step="0.1" value="1">
         </div>
         <div class="ctrl-group">
             <div class="ctrl-label"><span>Магнитное поле</span><span class="ctrl-value" id="magFieldVal">0.00</span></div>
             <input type="range" id="magField" min="0" max="2" step="0.1" value="0">
         </div>
         <div class="ctrl-group">
-            <div class="ctrl-label"><span>Число частиц</span><span class="ctrl-value" id="numParticlesVal">150</span></div>
-            <input type="range" id="numParticles" min="50" max="500" step="10" value="150">
+            <div class="ctrl-label"><span>Вязкость</span><span class="ctrl-value" id="viscosityVal">0.00</span></div>
+            <input type="range" id="viscosity" min="0" max="0.5" step="0.01" value="0">
+        </div>
+
+        <div class="section-header">Параметры системы</div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>Температура</span><span class="ctrl-value" id="systemTempVal">273K</span></div>
+            <input type="range" id="systemTemp" min="0" max="1000" step="10" value="273">
+        </div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>Частиц</span><span class="ctrl-value" id="numParticlesVal">150</span></div>
+            <input type="range" id="numParticles" min="20" max="500" step="10" value="150">
+        </div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>Скорость частиц</span><span class="ctrl-value" id="particleSpeedVal">1.0</span></div>
+            <input type="range" id="particleSpeed" min="0.1" max="3" step="0.1" value="1">
+        </div>
+
+        <div class="section-header">Пресеты</div>
+        <div class="preset-grid">
+            <button class="preset-btn" onclick="applyPreset('blackhole')">🕳️ Чёрная дыра</button>
+            <button class="preset-btn" onclick="applyPreset('solar')">☀️ Солнце</button>
+            <button class="preset-btn" onclick="applyPreset('nebula')">🌫️ Туманность</button>
+            <button class="preset-btn" onclick="applyPreset('quantum')">⚛️ Квантовый</button>
+            <button class="preset-btn" onclick="applyPreset('frozen')">❄️ Заморозка</button>
+            <button class="preset-btn" onclick="applyPreset('chaos')">🔥 Хаос</button>
+        </div>
+    </div>
+
+    <!-- VISUAL TAB -->
+    <div class="tab-content" id="tab-visual">
+        <div class="section-header">Звёзды</div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>Количество звёзд</span><span class="ctrl-value" id="starCountVal">200</span></div>
+            <input type="range" id="starCount" min="50" max="500" step="10" value="200">
+        </div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>Мерцание</span><span class="ctrl-value" id="twinkleVal">50%</span></div>
+            <input type="range" id="twinkle" min="0" max="100" step="5" value="50">
+        </div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>Размер звёзд</span><span class="ctrl-value" id="starSizeVal">1.0</span></div>
+            <input type="range" id="starSize" min="0.5" max="3" step="0.1" value="1">
+        </div>
+
+        <div class="section-header">Частицы</div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>Размер частиц</span><span class="ctrl-value" id="particleSizeVal">2</span></div>
+            <input type="range" id="particleSize" min="1" max="6" step="0.5" value="2">
+        </div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>След частиц</span><span class="ctrl-value" id="trailVal">Вкл</span></div>
+            <label class="toggle-wrap"><input type="checkbox" id="trailToggle" checked><span class="toggle-slider"></span></label>
+        </div>
+
+        <div class="section-header">Параллакс</div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>Чувствительность мыши</span><span class="ctrl-value" id="mouseSensVal">1.0</span></div>
+            <input type="range" id="mouseSens" min="0.1" max="2" step="0.1" value="1">
+        </div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>Плавность анимации</span><span class="ctrl-value" id="smoothVal">0.08</span></div>
+            <input type="range" id="animSmooth" min="0.01" max="0.3" step="0.01" value="0.08">
+        </div>
+
+        <div class="section-header">Темы оформления</div>
+        <div class="theme-grid">
+            <div class="theme-item active" data-theme="default" onclick="setTheme('default')">
+                <div class="theme-icon">🌌</div>
+                <div>Космос</div>
+            </div>
+            <div class="theme-item" data-theme="cyberpunk" onclick="setTheme('cyberpunk')">
+                <div class="theme-icon">🌃</div>
+                <div>Киберпанк</div>
+            </div>
+            <div class="theme-item" data-theme="sunset" onclick="setTheme('sunset')">
+                <div class="theme-icon">🌅</div>
+                <div>Закат</div>
+            </div>
+            <div class="theme-item" data-theme="ocean" onclick="setTheme('ocean')">
+                <div class="theme-icon">🌊</div>
+                <div>Океан</div>
+            </div>
+            <div class="theme-item" data-theme="minimal" onclick="setTheme('minimal')">
+                <div class="theme-icon">⬛</div>
+                <div>Минимализм</div>
+            </div>
+            <div class="theme-item" data-theme="nature" onclick="setTheme('nature')">
+                <div class="theme-icon">🌿</div>
+                <div>Природа</div>
+            </div>
         </div>
     </div>
 
     <!-- AI TAB -->
     <div class="tab-content" id="tab-ai">
         <div class="ctrl-group">
-            <div class="ctrl-label"><span>ИИ Анализ</span></div>
-            <label class="toggle-wrap"><input type="checkbox" id="aiAnalysis" checked><span class="toggle-slider"></span></label>
+            <div class="ctrl-label"><span>ИИ Наблюдатель</span></div>
+            <label class="toggle-wrap"><input type="checkbox" id="aiEnabled" checked><span class="toggle-slider"></span></label>
         </div>
         <div class="ctrl-group">
             <div class="ctrl-label"><span>Частота сообщений</span><span class="ctrl-value" id="aiFreqVal">5s</span></div>
             <input type="range" id="aiFreq" min="1" max="15" step="1" value="5">
         </div>
         <div class="ctrl-group">
-            <div class="ctrl-label"><span>Детализация прогнозов</span><span class="ctrl-value" id="predDetailVal">50%</span></div>
-            <input type="range" id="predDetail" min="10" max="100" step="10" value="50">
-        </div>
-        <div class="ctrl-group">
-            <div class="ctrl-label"><span>Голос ИИ</span></div>
-            <select id="aiVoice" style="width:100%;padding:8px;background:rgba(255,255,255,0.1);border:1px solid var(--border);border-radius:8px;color:var(--text);">
+            <div class="ctrl-label"><span>Стиль ИИ</span></div>
+            <select id="aiVoice">
                 <option value="neutral">Нейтральный</option>
                 <option value="scientific">Научный</option>
                 <option value="poetic">Поэтический</option>
             </select>
         </div>
+        <div class="ctrl-group">
+            <div class="ctrl-label"><span>Детализация</span><span class="ctrl-value" id="aiDetailVal">50%</span></div>
+            <input type="range" id="aiDetail" min="10" max="100" step="10" value="50">
+        </div>
+
+        <div class="section-header">Действия</div>
+        <button class="action-btn" onclick="askAI('status')">📊 Запросить статус системы</button>
+        <button class="action-btn" onclick="askAI('predict')">🔮 Запросить прогноз</button>
+        <button class="action-btn" onclick="askAI('physics')">⚛️ Физический анализ</button>
+        <button class="action-btn" onclick="askAI('entropy')">📉 Анализ энтропии</button>
     </div>
 
     <!-- PREDICTIONS TAB -->
-    <div class="tab-content" id="tab-predictions">
+    <div class="tab-content" id="tab-pred">
         <div class="prediction-graph">
-            <div class="graph-title">📈 Прогноз энергии системы (следующие 100 единиц времени)</div>
+            <div class="graph-title">📈 Прогноз энергии системы</div>
             <canvas id="predictionCanvas"></canvas>
         </div>
         <div class="ctrl-group">
@@ -767,57 +784,24 @@
             <input type="range" id="predHorizon" min="20" max="200" step="10" value="100">
         </div>
         <div class="ctrl-group">
-            <div class="ctrl-label"><span>Алгоритм прогноза</span></div>
-            <select id="predAlgorithm" style="width:100%;padding:8px;background:rgba(255,255,255,0.1);border:1px solid var(--border);border-radius:8px;color:var(--text);">
+            <div class="ctrl-label"><span>Алгоритм</span></div>
+            <select id="predAlgorithm">
                 <option value="linear">Линейная регрессия</option>
                 <option value="exponential">Экспоненциальное сглаживание</option>
-                <option value="polynomial">Полиномиальная аппроксимация</option>
+                <option value="polynomial">Полиномиальная</option>
                 <option value="fourier">Ряды Фурье</option>
             </select>
         </div>
+        <button class="action-btn" onclick="refreshPrediction()">🔄 Обновить прогноз</button>
     </div>
 </div>
 
-<!-- SCROLL CONTENT -->
-<div class="scroll-content">
-    <div class="content-section">
-        <h2 class="section-title">⚛️ Физическая модель</h2>
-        <p class="section-text">
-            Симуляция использует классическую механику Ньютона с элементами квантовой статистики. 
-            Каждая частица имеет массу, заряд, спин и подчиняется законам сохранения энергии и импульса.
-            Гравитационное взаимодействие рассчитывается по закону всемирного тяготения с учётом релятивистских поправок.
-        </p>
-    </div>
-    <div class="content-section">
-        <h2 class="section-title">🔮 Алгоритмы прогнозирования</h2>
-        <p class="section-text">
-            ИИ использует множество алгоритмов машинного обучения для предсказания поведения системы:
-            линейная регрессия, экспоненциальное сглаживание, полиномиальная аппроксимация и разложение Фурье.
-            Модель анализирует временные ряды и строит прогнозы с доверительными интервалами.
-        </p>
-    </div>
-    <div class="content-section">
-        <h2 class="section-title">🧠 ИИ Наблюдатель</h2>
-        <p class="section-text">
-            Нейронная сеть анализирует состояние системы в реальном времени, выявляет паттерны 
-            и генерирует осмысленные комментарии о происходящих физических процессах. Наблюдатель 
-            использует принципы квантовой механики для интерпретации событий.
-        </p>
-    </div>
-</div>
-
-<!-- TOAST CONTAINER -->
 <div id="toastContainer"></div>
 
+
 <script>
-// ============================================
-// CONFIGURATION
-// ============================================
 const config = {
-    global: {
-        animSmooth: 0.08,
-        mouseSensitivity: 1.0
-    },
+    global: { animSmooth: 0.08, mouseSensitivity: 1.0 },
     layers: {
         1: { enabled: true, scrollSpeed: 0.08, mouseSpeed: 0.03 },
         2: { enabled: true, scrollSpeed: 0.15, mouseSpeed: 0.08 },
@@ -825,57 +809,18 @@ const config = {
         4: { enabled: true, scrollSpeed: 0.35, mouseSpeed: 0.25 },
         5: { enabled: true, scrollSpeed: 0.5, mouseSpeed: 0.4 }
     },
-    stars: {
-        count: 200,
-        color: '#ffffff',
-        colorVar: 50,
-        twinkleSpeed: 0.02,
-        twinkleAmount: 0.5
-    },
-    particles: {
-        count: 150,
-        color: '#667eea',
-        size: 2,
-        speed: 1,
-        life: 1
-    },
-    physics: {
-        gravity: 1.0,
-        temperature: 273,
-        viscosity: 0,
-        magneticField: 0,
-        entropy: 0
-    },
-    ai: {
-        enabled: true,
-        frequency: 5,
-        detail: 50,
-        voice: 'neutral'
-    }
+    stars: { count: 200, twinkleAmount: 0.5, size: 1 },
+    particles: { count: 150, size: 2, speed: 1, showTrail: true },
+    physics: { gravity: 1, temperature: 273, viscosity: 0, magneticField: 0 },
+    ai: { enabled: true, frequency: 5, voice: 'neutral', detail: 50 }
 };
 
-// ============================================
-// STATE
-// ============================================
-let canvasWidth, canvasHeight;
-let mouseX = 0, mouseY = 0;
-let targetMouseX = 0, targetMouseY = 0;
-let scrollY = 0;
-let simTime = 0;
-let lastTime = performance.now();
-let fps = 60;
-let frameCount = 0;
-let lastFpsUpdate = 0;
-
+let canvasWidth, canvasHeight, mouseX = 0, mouseY = 0, targetMouseX = 0, targetMouseY = 0;
+let scrollY = 0, simTime = 0, lastTime = performance.now();
+let fps = 60, frameCount = 0, lastFpsUpdate = 0;
 const layers = {};
-let stars = [];
-let particles = [];
-let predictionData = [];
-let energyHistory = [];
+let stars = [], particles = [], predictionData = [], energyHistory = [];
 
-// ============================================
-// PHYSICS ENGINE
-// ============================================
 class Particle {
     constructor(x, y) {
         this.x = x || Math.random() * canvasWidth;
@@ -890,47 +835,37 @@ class Particle {
     }
 
     update(dt) {
-        // Apply gravity toward center
-        const cx = canvasWidth / 2;
-        const cy = canvasHeight / 2;
-        const dx = cx - this.x;
-        const dy = cy - this.y;
+        const cx = canvasWidth / 2, cy = canvasHeight / 2;
+        const dx = cx - this.x, dy = cy - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy) + 1;
         const force = config.physics.gravity * 1000 / (dist * dist);
-        
         this.vx += (dx / dist) * force * dt;
         this.vy += (dy / dist) * force * dt;
 
-        // Apply magnetic field (Lorentz force)
         if (config.physics.magneticField > 0) {
             const angle = this.spin + Math.PI / 2;
             this.vx += Math.cos(angle) * config.physics.magneticField * 0.1;
             this.vy += Math.sin(angle) * config.physics.magneticField * 0.1;
         }
 
-        // Apply viscosity
         this.vx *= (1 - config.physics.viscosity * 0.1);
         this.vy *= (1 - config.physics.viscosity * 0.1);
 
-        // Temperature effect (Brownian motion)
+
         const tempFactor = config.physics.temperature / 273;
         this.vx += (Math.random() - 0.5) * tempFactor * 0.5;
         this.vy += (Math.random() - 0.5) * tempFactor * 0.5;
 
-        // Update position
         this.x += this.vx * dt * 60;
         this.y += this.vy * dt * 60;
 
-        // Boundary wrap
+
         if (this.x < 0) this.x = canvasWidth;
         if (this.x > canvasWidth) this.x = 0;
         if (this.y < 0) this.y = canvasHeight;
         if (this.y > canvasHeight) this.y = 0;
 
-        // Update spin
         this.spin += 0.02 * dt * 60;
-
-        // Decay
         this.life -= this.decay * dt * 60;
         if (this.life <= 0) {
             this.life = 1;
@@ -941,109 +876,56 @@ class Particle {
         }
     }
 
-    getEnergy() {
-        return 0.5 * this.mass * (this.vx * this.vx + this.vy * this.vy);
-    }
+    getEnergy() { return 0.5 * this.mass * (this.vx * this.vx + this.vy * this.vy); }
 }
 
-// ============================================
-// PREDICTION ALGORITHMS
-// ============================================
-class Predictor {
-    constructor() {
-        this.history = [];
-        this.maxHistory = 200;
-    }
 
+class Predictor {
+    constructor() { this.history = []; this.maxHistory = 200; }
     add(value) {
         this.history.push(value);
-        if (this.history.length > this.maxHistory) {
-            this.history.shift();
-        }
+        if (this.history.length > this.maxHistory) this.history.shift();
     }
-
     linearRegression() {
         if (this.history.length < 2) return [];
-        
         const n = this.history.length;
         let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-        
-        for (let i = 0; i < n; i++) {
-            sumX += i;
-            sumY += this.history[i];
-            sumXY += i * this.history[i];
-            sumX2 += i * i;
-        }
-        
+        for (let i = 0; i < n; i++) { sumX += i; sumY += this.history[i]; sumXY += i * this.history[i]; sumX2 += i * i; }
         const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
         const intercept = (sumY - slope * sumX) / n;
-        
         const predictions = [];
-        for (let i = 0; i < config.ai.detail; i++) {
-            predictions.push(slope * (n + i) + intercept);
-        }
+        for (let i = 0; i < config.ai.detail; i++) predictions.push(slope * (n + i) + intercept);
         return predictions;
     }
-
     exponentialSmoothing(alpha = 0.3) {
         if (this.history.length < 2) return [];
-        
         let smoothed = this.history[0];
+        for (let i = 1; i < this.history.length; i++) smoothed = alpha * this.history[i] + (1 - alpha) * smoothed;
         const predictions = [];
-        
-        for (let i = 1; i < this.history.length; i++) {
-            smoothed = alpha * this.history[i] + (1 - alpha) * smoothed;
-        }
-        
-        for (let i = 0; i < config.ai.detail; i++) {
-            predictions.push(smoothed + Math.sin(i * 0.1) * Math.abs(smoothed * 0.1));
-        }
+        for (let i = 0; i < config.ai.detail; i++) predictions.push(smoothed + Math.sin(i * 0.1) * Math.abs(smoothed * 0.1));
         return predictions;
     }
-
-    polynomialRegression(degree = 2) {
-        if (this.history.length < degree + 1) return [];
-        
-        // Simplified polynomial fit
-        const n = this.history.length;
+    polynomialRegression() {
+        if (this.history.length < 3) return [];
+        let mean = this.history.reduce((a, b) => a + b, 0) / this.history.length;
+        let variance = this.history.reduce((a, b) => a + (b - mean) ** 2, 0) / this.history.length;
         const predictions = [];
-        
-        // Calculate mean
-        let mean = 0;
-        for (let v of this.history) mean += v;
-        mean /= n;
-        
-        // Calculate variance
-        let variance = 0;
-        for (let v of this.history) variance += (v - mean) ** 2;
-        variance /= n;
-        
         for (let i = 0; i < config.ai.detail; i++) {
-            const x = n + i;
-            const trend = (x - n / 2) / n;
+            const trend = (this.history.length + i - this.history.length / 2) / this.history.length;
             predictions.push(mean + trend * variance * 0.1 * Math.sin(i * 0.2));
         }
         return predictions;
     }
-
     fourierPredict() {
         if (this.history.length < 10) return [];
-        
         const predictions = [];
-        const period = 20; // Assume period
-        
         for (let i = 0; i < config.ai.detail; i++) {
             let value = 0;
-            // Simple Fourier approximation
-            for (let k = 1; k <= 3; k++) {
-                const freq = (2 * Math.PI * k) / period;
-                value += Math.sin(freq * (this.history.length + i) + k) * (1 / k);
-            }
+            for (let k = 1; k <= 3; k++) value += Math.sin((2 * Math.PI * k * (this.history.length + i)) / 20 + k) * (1 / k);
             predictions.push(this.history[this.history.length - 1] + value * 10);
         }
         return predictions;
     }
-
     predict(method = 'linear') {
         switch (method) {
             case 'linear': return this.linearRegression();
@@ -1057,73 +939,69 @@ class Predictor {
 
 const predictor = new Predictor();
 
-// ============================================
-// AI OBSERVER
-// ============================================
 class AIObserver {
-    constructor() {
-        this.messages = [];
-        this.lastMessageTime = 0;
-        this.observations = [];
-    }
-
+    constructor() { this.lastMessageTime = 0; }
     analyze() {
         const totalEnergy = particles.reduce((sum, p) => sum + p.getEnergy(), 0);
         const avgVelocity = particles.reduce((sum, p) => sum + Math.sqrt(p.vx**2 + p.vy**2), 0) / particles.length;
         const entropy = -Math.log(totalEnergy + 0.001) * 100;
-        const temperature = config.physics.temperature;
-        const gravity = config.physics.gravity;
-        
-        return { totalEnergy, avgVelocity, entropy, temperature, gravity };
+        return { totalEnergy, avgVelocity, entropy, temperature: config.physics.temperature, gravity: config.physics.gravity };
     }
-
-    generateMessage(analysis) {
-        const { totalEnergy, avgVelocity, entropy, temperature, gravity } = analysis;
-        
+    generateMessage(type = 'normal') {
+        const { totalEnergy, avgVelocity, entropy, temperature, gravity } = this.analyze();
         const templates = {
             neutral: [
-                `Система стабильна. Энергия: ${totalEnergy.toFixed(1)} Дж. Температура: ${temperature}K.`,
-                `Наблюдаю ${particles.length} частиц. Средняя скорость: ${avgVelocity.toFixed(2)} м/с.`,
-                `Энтропия системы: ${entropy.toFixed(2)}. Процессы протекают нормально.`,
-                `Гравитация ${gravity > 1 ? 'повышена' : 'в норме'}. Частицы взаимодействуют.`,
-                `Температура ${temperature > 500 ? 'высокая' : 'оптимальная'}. Кинетическая энергия стабильна.`
+                `Энергия системы: ${totalEnergy.toFixed(1)} Дж. Температура: ${temperature}K.`,
+                `Наблюдаю ${particles.length} частиц. Скорость: ${avgVelocity.toFixed(2)} м/с.`,
+                `Энтропия: ${entropy.toFixed(2)}. Система стабильна.`,
+                `Гравитация ${gravity > 1 ? 'повышена' : 'в норме'}.`,
+                `Температура ${temperature > 500 ? 'высокая' : 'оптимальная'}.`
             ],
             scientific: [
-                `Термодинамический анализ: T=${temperature}K, E=${totalEnergy.toFixed(2)}J, S=${entropy.toFixed(2)}`,
-                `Обнаружено ${particles.length} частиц. Вектор средней скорости: v̅=${avgVelocity.toFixed(3)} м/с`,
-                `Энтропия S = -k·ln(W) = ${entropy.toFixed(4)}. Система приближается к равновесию.`,
-                `Гравитационный потенциал: φ = ${(gravity * 10).toFixed(3)}. Наблюдается коллапс облака.`,
-                `Параметр порядка η = ${(totalEnergy / (temperature + 1)).toFixed(4)}. Флуктуации минимальны.`
+                `Термодинамика: T=${temperature}K, E=${totalEnergy.toFixed(2)}J, S=${entropy.toFixed(4)}`,
+                `Вектор скорости: v̅=${avgVelocity.toFixed(3)} м/с. N=${particles.length} частиц.`,
+                `Энтропия S = -k·ln(W) = ${entropy.toFixed(4)}. Равновесие близко.`,
+                `Гравитационный потенциал: φ = ${(gravity * 10).toFixed(3)}.`,
+                `Параметр порядка η = ${(totalEnergy / (temperature + 1)).toFixed(4)}.`
             ],
             poetic: [
-                `В глубинах космоса танцуют частицы... Энергия ${totalEnergy.toFixed(0)} единиц жизни.`,
-                `Время течёт, как песок сквозь пальцы. ${temperature} градусов — тепло вечности.`,
-                `Каждая частица — это звезда в миниатюре. ${particles.length} звёзд рождаются и угасают.`,
-                `Гравитация — невидимая рука, что связывает всё сущее. Сила ${gravity.toFixed(1)}.`,
+                `В глубинах космоса танцуют частицы... Энергия ${totalEnergy.toFixed(0)} единиц.`,
+                `Время течёт, как песок. ${temperature} градусов — тепло вечности.`,
+                `Каждая частица — звезда в миниатюре. ${particles.length} звёзд рождаются и угасают.`,
+                `Гравитация — невидимая рука, связывающая всё сущее.`,
                 `Энтропия — шепот смерти вселенной. Но пока есть движение — есть жизнь.`
+            ],
+            status: [
+                `📊 Статус системы: ${particles.length} частиц, T=${temperature}K, E=${totalEnergy.toFixed(1)}J.`,
+                `Анализ: давление стабильно, энтропия в норме.`,
+                `Состояние: система функционирует корректно.`
+            ],
+            predict: [
+                `🔮 Прогноз: ожидаю ${(totalEnergy * 1.1).toFixed(1)}J через 10 единиц времени.`,
+                `Алгоритм предсказывает ${energyHistory.length > 5 ? 'стабильность' : 'флуктуации'}.`,
+                `Ряд Фурье указывает на периодические колебания.`
+            ],
+            physics: [
+                `⚛️ Гравитация: G=${gravity}, Магнитное поле: B=${config.physics.magneticField.toFixed(2)}.`,
+                `Сила Лоренца действует на заряженные частицы.`,
+                `Вязкость η=${config.physics.viscosity.toFixed(3)} влияет на динамику.`
+            ],
+            entropy: [
+                `📉 Энтропия S=${entropy.toFixed(2)}. Система ${entropy < 50 ? 'близка к равновесию' : 'в нестабильном состоянии'}.`,
+                `Броуновское движение усиливает хаос.`,
+                `Температура ${temperature}K определяет кинетическую энергию.`
             ]
         };
-
         const voice = config.ai.voice || 'neutral';
-        const messages = templates[voice] || templates.neutral;
-        return messages[Math.floor(Math.random() * messages.length)];
+        const msgs = type === 'normal' ? templates[voice] : templates[type] || templates.neutral;
+        return msgs[Math.floor(Math.random() * msgs.length)];
     }
-
     update() {
         const now = Date.now();
-        const freq = config.ai.frequency * 1000;
-        
-        if (now - this.lastMessageTime > freq && config.ai.enabled) {
-            const analysis = this.analyze();
-            const message = this.generateMessage(analysis);
-            
-            document.getElementById('aiMessage').textContent = message;
+        if (now - this.lastMessageTime > config.ai.frequency * 1000 && config.ai.enabled) {
+            document.getElementById('aiMessage').textContent = this.generateMessage('normal');
             document.getElementById('aiThinking').style.display = 'flex';
-            
-            setTimeout(() => {
-                document.getElementById('aiThinking').style.display = 'none';
-            }, 500);
-            
+            setTimeout(() => document.getElementById('aiThinking').style.display = 'none', 500);
             this.lastMessageTime = now;
         }
     }
@@ -1131,9 +1009,6 @@ class AIObserver {
 
 const aiObserver = new AIObserver();
 
-// ============================================
-// CANVAS RENDERING
-// ============================================
 let starsCtx, particlesCtx, predCtx;
 let starsCanvas, particlesCanvas, predCanvas;
 
@@ -1141,15 +1016,14 @@ function initStars() {
     starsCanvas = document.getElementById('starsCanvas');
     starsCtx = starsCanvas.getContext('2d');
     resizeCanvas(starsCanvas, starsCtx);
-    
     stars = [];
     for (let i = 0; i < config.stars.count; i++) {
         stars.push({
             x: Math.random() * canvasWidth,
             y: Math.random() * canvasHeight,
-            size: Math.random() * 2 + 0.5,
+            size: Math.random() * config.stars.size + 0.5,
             brightness: Math.random(),
-            twinkleSpeed: Math.random() * config.stars.twinkleSpeed + 0.01,
+            twinkleSpeed: Math.random() * 0.02 + 0.01,
             twinkleOffset: Math.random() * Math.PI * 2
         });
     }
@@ -1159,18 +1033,15 @@ function initParticles() {
     particlesCanvas = document.getElementById('particlesCanvas');
     particlesCtx = particlesCanvas.getContext('2d');
     resizeCanvas(particlesCanvas, particlesCtx);
-    
     particles = [];
-    for (let i = 0; i < config.particles.count; i++) {
-        particles.push(new Particle());
-    }
+    for (let i = 0; i < config.particles.count; i++) particles.push(new Particle());
 }
 
 function initPrediction() {
     predCanvas = document.getElementById('predictionCanvas');
     predCtx = predCanvas.getContext('2d');
-    predCanvas.width = 350;
-    predCanvas.height = 120;
+    predCanvas.width = 380;
+    predCanvas.height = 100;
 }
 
 function resizeCanvas(canvas, ctx) {
@@ -1189,33 +1060,17 @@ function resizeCanvases() {
 
 function drawStars() {
     starsCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-    
     const time = simTime;
-    
     stars.forEach(star => {
-        const twinkle = Math.sin(time * star.twinkleSpeed + star.twinkleOffset) 
-                       * config.stars.twinkleAmount + 0.5;
+        const twinkle = Math.sin(time * star.twinkleSpeed + star.twinkleOffset) * config.stars.twinkleAmount + 0.5;
         const alpha = star.brightness * twinkle;
-        
-        // Color variation
-        const hue = Math.random() * 60 + 200; // Blue to white
-        const colorVar = config.stars.colorVar;
-        const r = 255;
-        const g = 255 - Math.random() * colorVar;
-        const b = 255 - Math.random() * colorVar * 0.5;
-        
         starsCtx.beginPath();
         starsCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        starsCtx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+        starsCtx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         starsCtx.fill();
-        
-        // Glow
         if (star.size > 1.5) {
-            const gradient = starsCtx.createRadialGradient(
-                star.x, star.y, 0,
-                star.x, star.y, star.size * 3
-            );
-            gradient.addColorStop(0, `rgba(${r},${g},${b},${alpha * 0.3})`);
+            const gradient = starsCtx.createRadialGradient(star.x, star.y, 0, star.x, star.y, star.size * 3);
+            gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.3})`);
             gradient.addColorStop(1, 'transparent');
             starsCtx.fillStyle = gradient;
             starsCtx.fillRect(star.x - star.size * 3, star.y - star.size * 3, star.size * 6, star.size * 6);
@@ -1225,40 +1080,25 @@ function drawStars() {
 
 function drawParticles() {
     particlesCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-    
     particles.forEach(p => {
         const alpha = p.life;
-        const color = config.particles.color;
-        
-        // Draw particle
         particlesCtx.beginPath();
         particlesCtx.arc(p.x, p.y, config.particles.size * p.life, 0, Math.PI * 2);
-        particlesCtx.fillStyle = color.replace(')', `,${alpha})`).replace('rgb', 'rgba').replace('#', '');
-        
-        // Convert hex to rgba
-        if (color.startsWith('#')) {
-            const r = parseInt(color.slice(1, 3), 16);
-            const g = parseInt(color.slice(3, 5), 16);
-            const b = parseInt(color.slice(5, 7), 16);
-            particlesCtx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
-        }
-        
+        particlesCtx.fillStyle = `rgba(102, 126, 234, ${alpha})`;
         particlesCtx.fill();
-        
-        // Draw trail
-        particlesCtx.beginPath();
-        particlesCtx.moveTo(p.x - p.vx * 3, p.y - p.vy * 3);
-        particlesCtx.lineTo(p.x, p.y);
-        particlesCtx.strokeStyle = `rgba(102, 126, 234, ${alpha * 0.3})`;
-        particlesCtx.lineWidth = 1;
-        particlesCtx.stroke();
+        if (config.particles.showTrail) {
+            particlesCtx.beginPath();
+            particlesCtx.moveTo(p.x - p.vx * 3, p.y - p.vy * 3);
+            particlesCtx.lineTo(p.x, p.y);
+            particlesCtx.strokeStyle = `rgba(102, 126, 234, ${alpha * 0.3})`;
+            particlesCtx.lineWidth = 1;
+            particlesCtx.stroke();
+        }
     });
 }
 
 function drawPrediction() {
     predCtx.clearRect(0, 0, predCanvas.width, predCanvas.height);
-    
-    // Draw background grid
     predCtx.strokeStyle = 'rgba(255,255,255,0.1)';
     predCtx.lineWidth = 1;
     for (let i = 0; i < 5; i++) {
@@ -1268,113 +1108,76 @@ function drawPrediction() {
         predCtx.lineTo(predCanvas.width, y);
         predCtx.stroke();
     }
-    
     if (predictionData.length < 2) return;
-    
-    // Find min/max for scaling
     const allValues = [...energyHistory, ...predictionData];
     const min = Math.min(...allValues);
     const max = Math.max(...allValues);
     const range = max - min || 1;
-    
-    // Draw history
     predCtx.beginPath();
     predCtx.strokeStyle = 'rgba(102, 126, 234, 0.8)';
     predCtx.lineWidth = 2;
-    
     energyHistory.forEach((val, i) => {
         const x = (i / energyHistory.length) * predCanvas.width * 0.5;
         const y = predCanvas.height - ((val - min) / range) * predCanvas.height * 0.8 - 10;
-        if (i === 0) predCtx.moveTo(x, y);
-        else predCtx.lineTo(x, y);
+        if (i === 0) predCtx.moveTo(x, y); else predCtx.lineTo(x, y);
     });
     predCtx.stroke();
-    
-    // Draw prediction
     predCtx.beginPath();
     predCtx.strokeStyle = 'rgba(236, 72, 153, 0.8)';
     predCtx.lineWidth = 2;
     predCtx.setLineDash([5, 5]);
-    
     const startX = predCanvas.width * 0.5;
     predictionData.forEach((val, i) => {
         const x = startX + (i / predictionData.length) * predCanvas.width * 0.5;
         const y = predCanvas.height - ((val - min) / range) * predCanvas.height * 0.8 - 10;
-        if (i === 0) predCtx.moveTo(x, y);
-        else predCtx.lineTo(x, y);
+        if (i === 0) predCtx.moveTo(x, y); else predCtx.lineTo(x, y);
     });
     predCtx.stroke();
     predCtx.setLineDash([]);
 }
 
-// ============================================
-// PARALLAX
-// ============================================
 function updateParallax() {
     const smooth = config.global.animSmooth;
     mouseX += (targetMouseX - mouseX) * smooth;
     mouseY += (targetMouseY - mouseY) * smooth;
-    
     const centerX = (mouseX - canvasWidth / 2) / canvasWidth;
     const centerY = (mouseY - canvasHeight / 2) / canvasHeight;
     const sensitivity = config.global.mouseSensitivity;
-    
     for (let i = 1; i <= 5; i++) {
         if (!config.layers[i].enabled) {
             layers[i].style.transform = 'translate3d(0, 0, 0)';
             layers[i].style.opacity = '0';
             continue;
         }
-        
         layers[i].style.opacity = '1';
-        
         const scrollOffset = scrollY * config.layers[i].scrollSpeed;
         const mouseOffsetX = centerX * config.layers[i].mouseSpeed * sensitivity * 200;
         const mouseOffsetY = centerY * config.layers[i].mouseSpeed * sensitivity * 100;
-        
-        const totalX = mouseOffsetX;
-        const totalY = -scrollOffset + mouseOffsetY;
-        
-        layers[i].style.transform = `translate3d(${totalX}px, ${totalY}px, 0)`;
+        layers[i].style.transform = `translate3d(${mouseOffsetX}px, ${-scrollOffset + mouseOffsetY}px, 0)`;
     }
 }
 
-// ============================================
-// PHYSICS HUD UPDATE
-// ============================================
 function updateHUD() {
     const totalEnergy = particles.reduce((sum, p) => sum + p.getEnergy(), 0);
     const entropy = -Math.log(totalEnergy + 0.001) * 100;
     const pressure = totalEnergy * config.physics.temperature / 1000;
-    const density = particles.length / (canvasWidth * canvasHeight) * 1000000;
-    
     document.getElementById('simTime').textContent = simTime.toFixed(2) + 's';
     document.getElementById('particleCount').textContent = particles.length;
     document.getElementById('temperature').textContent = config.physics.temperature + 'K';
     document.getElementById('systemEnergy').textContent = totalEnergy.toFixed(1) + ' J';
     document.getElementById('entropy').textContent = entropy.toFixed(2);
     document.getElementById('pressure').textContent = pressure.toFixed(1) + ' Pa';
-    document.getElementById('density').textContent = density.toFixed(2);
-    
-    // Update energy history
     energyHistory.push(totalEnergy);
     if (energyHistory.length > 100) energyHistory.shift();
-    
-    // Update prediction
     predictor.add(totalEnergy);
     const method = document.getElementById('predAlgorithm')?.value || 'linear';
     predictionData = predictor.predict(method);
 }
 
-// ============================================
-// MAIN LOOP
-// ============================================
 function animate(currentTime) {
     const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
     lastTime = currentTime;
     simTime += dt;
-    
-    // FPS counter
     frameCount++;
     if (currentTime - lastFpsUpdate > 500) {
         fps = Math.round(frameCount * 2);
@@ -1382,58 +1185,46 @@ function animate(currentTime) {
         frameCount = 0;
         lastFpsUpdate = currentTime;
     }
-    
-    // Update physics
     particles.forEach(p => p.update(dt));
-    
-    // Update visuals
     drawStars();
     drawParticles();
     drawPrediction();
     updateParallax();
     updateHUD();
-    
-    // Update AI
     aiObserver.update();
-    
     requestAnimationFrame(animate);
 }
 
-// ============================================
-// EVENT HANDLERS
-// ============================================
 function setupEventListeners() {
-    // Mouse move
-    document.addEventListener('mousemove', (e) => {
-        targetMouseX = e.clientX;
-        targetMouseY = e.clientY;
-    });
-    
-    // Scroll
-    window.addEventListener('scroll', () => {
-        scrollY = window.scrollY;
-    });
-    
-    // Resize
+    document.addEventListener('mousemove', (e) => { targetMouseX = e.clientX; targetMouseY = e.clientY; });
+    window.addEventListener('scroll', () => { scrollY = window.scrollY; });
     window.addEventListener('resize', resizeCanvases);
-    
-    // Control panel
-    document.getElementById('openPanelBtn').addEventListener('click', () => {
-        document.getElementById('controlPanel').classList.add('open');
+
+    document.getElementById('settingsBtn').addEventListener('click', () => document.getElementById('controlPanel').classList.add('open'));
+    document.getElementById('closePanelBtn').addEventListener('click', () => document.getElementById('controlPanel').classList.remove('open'));
+    document.getElementById('themeBtn').addEventListener('click', () => {
+        const themes = ['default', 'cyberpunk', 'sunset', 'ocean', 'minimal', 'nature'];
+        const current = document.body.getAttribute('data-theme') || 'default';
+        const idx = themes.indexOf(current);
+        const next = themes[(idx + 1) % themes.length];
+        setTheme(next);
     });
-    
-    document.getElementById('closePanelBtn').addEventListener('click', () => {
-        document.getElementById('controlPanel').classList.remove('open');
+    document.getElementById('aiToggleBtn').addEventListener('click', () => {
+        config.ai.enabled = !config.ai.enabled;
+        showToast(config.ai.enabled ? '🤖 ИИ включён' : '🤖 ИИ выключен', 'info');
     });
-    
-    // ESC key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            document.getElementById('controlPanel').classList.toggle('open');
-        }
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        initStars();
+        initParticles();
+        energyHistory = [];
+        simTime = 0;
+        showToast('🔄 Сброшено', 'success');
     });
-    
-    // Tabs
+    document.getElementById('fullscreenBtn').addEventListener('click', () => {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else document.documentElement.requestFullscreen();
+    });
+
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1442,112 +1233,114 @@ function setupEventListeners() {
             document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
         });
     });
-    
-    // Sliders
+
     const sliders = [
-        { id: 'gravConst', config: 'physics.gravity', prop: 'gravConst' },
-        { id: 'particleSpeed', config: 'particles.speed', prop: 'particleSpeed' },
-        { id: 'systemTemp', config: 'physics.temperature', prop: 'systemTemp' },
-        { id: 'viscosity', config: 'physics.viscosity', prop: 'viscosity' },
-        { id: 'magField', config: 'physics.magneticField', prop: 'magField' },
-        { id: 'numParticles', config: 'particles.count', prop: 'numParticles', onChange: () => initParticles() },
-        { id: 'aiFreq', config: 'ai.frequency', prop: 'aiFreq' },
-        { id: 'predDetail', config: 'ai.detail', prop: 'predDetail' },
-        { id: 'predHorizon', config: 'ai.detail', prop: 'predHorizon' }
+        { id: 'gravConst', path: 'physics.gravity', prop: 'gravConst' },
+        { id: 'magField', path: 'physics.magneticField', prop: 'magField' },
+        { id: 'viscosity', path: 'physics.viscosity', prop: 'viscosity' },
+        { id: 'systemTemp', path: 'physics.temperature', prop: 'systemTemp', suffix: 'K' },
+        { id: 'numParticles', path: 'particles.count', prop: 'numParticles', onChange: initParticles },
+        { id: 'particleSpeed', path: 'particles.speed', prop: 'particleSpeed' },
+        { id: 'starCount', path: 'stars.count', prop: 'starCount', onChange: initStars },
+        { id: 'twinkle', path: 'stars.twinkleAmount', prop: 'twinkle', scale: 0.01, suffix: '%' },
+        { id: 'starSize', path: 'stars.size', prop: 'starSize', onChange: initStars },
+        { id: 'particleSize', path: 'particles.size', prop: 'particleSize' },
+        { id: 'mouseSens', path: 'global.mouseSensitivity', prop: 'mouseSens' },
+        { id: 'animSmooth', path: 'global.animSmooth', prop: 'smooth' },
+        { id: 'aiFreq', path: 'ai.frequency', prop: 'aiFreq', suffix: 's' },
+        { id: 'aiDetail', path: 'ai.detail', prop: 'aiDetail', suffix: '%' },
+        { id: 'predHorizon', path: 'ai.detail', prop: 'predHorizon' }
     ];
-    
-    sliders.forEach(slider => {
-        const el = document.getElementById(slider.id);
+    sliders.forEach(s => {
+        const el = document.getElementById(s.id);
         if (el) {
             el.addEventListener('input', () => {
                 const val = parseFloat(el.value);
-                const path = slider.config.split('.');
+                const path = s.path.split('.');
                 let obj = config;
                 path.forEach(p => obj = obj[p]);
                 obj = val;
-                
-                const valEl = document.getElementById(slider.prop + 'Val');
-                if (valEl) valEl.textContent = val;
-                
-                if (slider.onChange) slider.onChange();
+                const valEl = document.getElementById(s.prop + 'Val');
+                if (valEl) valEl.textContent = val + (s.suffix || '');
+                if (s.onChange) s.onChange();
             });
         }
     });
-    
-    // AI toggle
-    const aiToggle = document.getElementById('aiAnalysis');
-    if (aiToggle) {
-        aiToggle.addEventListener('change', () => {
-            config.ai.enabled = aiToggle.checked;
-        });
-    }
-    
-    // AI voice
-    const aiVoice = document.getElementById('aiVoice');
-    if (aiVoice) {
-        aiVoice.addEventListener('change', () => {
-            config.ai.voice = aiVoice.value;
-        });
-    }
-    
-    // Prediction algorithm
-    const predAlg = document.getElementById('predAlgorithm');
-    if (predAlg) {
-        predAlg.addEventListener('change', () => {
-            const method = predAlg.value;
-            predictionData = predictor.predict(method);
-        });
+
+    document.getElementById('aiEnabled')?.addEventListener('change', (e) => { config.ai.enabled = e.target.checked; });
+    document.getElementById('aiVoice')?.addEventListener('change', (e) => { config.ai.voice = e.target.value; });
+    document.getElementById('trailToggle')?.addEventListener('change', (e) => { config.particles.showTrail = e.target.checked; });
+    document.getElementById('predAlgorithm')?.addEventListener('change', () => { refreshPrediction(); });
+}
+
+function setTheme(theme) {
+    document.body.setAttribute('data-theme', theme === 'default' ? '' : theme);
+    document.querySelectorAll('.theme-item').forEach(el => el.classList.remove('active'));
+    document.querySelector(`.theme-item[data-theme="${theme}"]`)?.classList.add('active');
+    showToast(`🎨 Тема: ${theme}`, 'info');
+}
+
+function applyPreset(name) {
+    const presets = {
+        blackhole: { gravity: 5, magneticField: 1.5, viscosity: 0.3, temperature: 50, particles: { count: 300 } },
+        solar: { gravity: 2, magneticField: 0.5, viscosity: 0, temperature: 800, particles: { count: 200 } },
+        nebula: { gravity: 0.5, magneticField: 0.2, viscosity: 0.1, temperature: 200, particles: { count: 400 } },
+        quantum: { gravity: 0.2, magneticField: 2, viscosity: 0, temperature: 1, particles: { count: 100 } },
+        frozen: { gravity: 0.8, magneticField: 0, viscosity: 0.5, temperature: 0, particles: { count: 150 } },
+        chaos: { gravity: 3, magneticField: 1, viscosity: 0, temperature: 1000, particles: { count: 500 } }
+    };
+    const p = presets[name];
+    if (p) {
+        Object.assign(config.physics, p);
+        Object.assign(config.particles, p.particles);
+        document.getElementById('gravConst').value = config.physics.gravity;
+        document.getElementById('gravConstVal').textContent = config.physics.gravity.toFixed(2);
+        document.getElementById('magField').value = config.physics.magneticField;
+        document.getElementById('magFieldVal').textContent = config.physics.magneticField.toFixed(2);
+        document.getElementById('viscosity').value = config.physics.viscosity;
+        document.getElementById('viscosityVal').textContent = config.physics.viscosity.toFixed(2);
+        document.getElementById('systemTemp').value = config.physics.temperature;
+        document.getElementById('systemTempVal').textContent = config.physics.temperature + 'K';
+        document.getElementById('numParticles').value = config.particles.count;
+        document.getElementById('numParticlesVal').textContent = config.particles.count;
+        initParticles();
+        showToast(`Пресет: ${name}`, 'success');
     }
 }
 
-// ============================================
-// INIT
-// ============================================
-function init() {
-    // Get layers
-    for (let i = 1; i <= 5; i++) {
-        layers[i] = document.querySelector('.layer-' + i);
-    }
-    
-    // Initialize canvases
-    initStars();
-    initParticles();
-    initPrediction();
-    
-    // Setup events
-    setupEventListeners();
-    
-    // Hide loading screen
-    setTimeout(() => {
-        document.getElementById('loadingScreen').classList.add('hidden');
-    }, 1500);
-    
-    // Start animation
-    requestAnimationFrame(animate);
-    
-    // Show welcome message
-    setTimeout(() => {
-        showToast('🧠 ИИ Наблюдатель активирован', 'success');
-    }, 2000);
+function askAI(type) {
+    const msg = aiObserver.generateMessage(type);
+    document.getElementById('aiMessage').textContent = msg;
+    document.getElementById('aiThinking').style.display = 'flex';
+    setTimeout(() => document.getElementById('aiThinking').style.display = 'none', 500);
 }
 
-// ============================================
-// TOAST
-// ============================================
+function refreshPrediction() {
+    const method = document.getElementById('predAlgorithm').value;
+    predictionData = predictor.predict(method);
+    showToast('🔄 Прогноз обновлён', 'success');
+}
+
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.innerHTML = message;
     container.appendChild(toast);
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100px)';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100px)'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
-// Start
+function init() {
+    for (let i = 1; i <= 5; i++) layers[i] = document.querySelector('.layer-' + i);
+    initStars();
+    initParticles();
+    initPrediction();
+    setupEventListeners();
+    setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 1500);
+    requestAnimationFrame(animate);
+    setTimeout(() => showToast('🧠 ИИ Наблюдатель активирован', 'success'), 2000);
+}
+
 window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
