@@ -26,6 +26,7 @@ let stars = [], particles = [], predictionData = [], energyHistory = [];
 
 let starsCtx, particlesCtx, predCtx;
 let starsCanvas, particlesCanvas, predCanvas;
+let predictor;
 
 function initStars() {
     starsCanvas = document.getElementById('starsCanvas');
@@ -62,6 +63,7 @@ function initPrediction() {
     predCtx = predCanvas.getContext('2d');
     predCanvas.width = 380;
     predCanvas.height = 100;
+    predictor = new Predictor();
 }
 
 function resizeCanvas(canvas, ctx) {
@@ -118,6 +120,7 @@ function drawParticles() {
 }
 
 function drawPrediction() {
+    if (!predCtx || !predCanvas) return;
     predCtx.clearRect(0, 0, predCanvas.width, predCanvas.height);
     predCtx.strokeStyle = 'rgba(255,255,255,0.1)';
     predCtx.lineWidth = 1;
@@ -128,7 +131,7 @@ function drawPrediction() {
         predCtx.lineTo(predCanvas.width, y);
         predCtx.stroke();
     }
-    if (predictionData.length < 2) return;
+    if (predictionData.length < 2 || energyHistory.length < 2) return;
     const allValues = [...energyHistory, ...predictionData];
     const min = Math.min(...allValues);
     const max = Math.max(...allValues);
@@ -189,9 +192,9 @@ function updateHUD() {
     document.getElementById('pressure').textContent = pressure.toFixed(1) + ' Pa';
     energyHistory.push(totalEnergy);
     if (energyHistory.length > 100) energyHistory.shift();
-    predictor.add(totalEnergy);
+    if (predictor) predictor.add(totalEnergy);
     const method = document.getElementById('predAlgorithm')?.value || 'linear';
-    predictionData = predictor.predict(method);
+    if (predictor) predictionData = predictor.predict(method);
 }
 
 function animate(currentTime) {
@@ -356,6 +359,7 @@ function askAI(type) {
 }
 
 function refreshPrediction() {
+    if (!predictor) return;
     const method = document.getElementById('predAlgorithm').value;
     predictionData = predictor.predict(method);
     showToast('🔄 Прогноз обновлён', 'success');
@@ -363,6 +367,7 @@ function refreshPrediction() {
 
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
+    if (!container) return;
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.innerHTML = message;
@@ -371,7 +376,12 @@ function showToast(message, type = 'info') {
 }
 
 function init() {
-    for (let i = 1; i <= 5; i++) layers[i] = document.querySelector('.layer-' + i);
+    console.log('🚀 Инициализация...');
+    
+    for (let i = 1; i <= 5; i++) {
+        layers[i] = document.querySelector('.layer-' + i);
+    }
+    
     initStars();
     initParticles();
     initPrediction();
@@ -382,8 +392,16 @@ function init() {
     if (window.sandbox) window.sandbox.init();
     if (window.aiObserver) window.aiObserver.init();
     
-    setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 1500);
+    console.log('✅ Частиц создано:', particles.length);
+    console.log('✅ Звёзд создано:', stars.length);
+    
+    setTimeout(() => {
+        const loading = document.getElementById('loadingScreen');
+        if (loading) loading.classList.add('hidden');
+    }, 1500);
+    
     requestAnimationFrame(animate);
+    
     setTimeout(() => showToast('🧠 ИИ Наблюдатель активирован', 'success'), 2000);
 }
 
